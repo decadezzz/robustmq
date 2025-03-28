@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::collections::HashMap;
-use std::sync::Arc;
-
-use common_base::error::common::CommonError;
-
 use crate::core::cache::PlacementCacheManager;
+use crate::server::grpc::validate::ValidateExt;
 use crate::storage::keys::storage_key_mqtt_node_sub_group_leader;
 use crate::storage::placement::kv::KvStorage;
 use crate::storage::rocksdb::RocksDBEngine;
+use common_base::error::common::CommonError;
+use protocol::placement_center::placement_center_mqtt::{
+    GetShareSubLeaderReply, GetShareSubLeaderRequest,
+};
+use std::collections::HashMap;
+use std::sync::Arc;
+use tonic::{Request, Response, Status};
 
 pub struct ShareSubLeader {
     cluster_cache: Arc<PlacementCacheManager>,
@@ -195,13 +198,41 @@ impl ShareSubLeader {
     }
 }
 
+pub fn get_share_sub_leader_by_req(
+    cluster_cache: &Arc<PlacementCacheManager>,
+    rocksdb_engine_handler: &Arc<RocksDBEngine>,
+    request: Request<GetShareSubLeaderRequest>,
+) -> Result<Response<GetShareSubLeaderReply>, Status> {
+    let req = request.into_inner();
+    req.validate_ext()?;
+    let cluster_name = req.cluster_name;
+    let group_name = req.group_name;
+    let mut reply = GetShareSubLeaderReply::default();
+    let share_sub = ShareSubLeader::new(cluster_cache.clone(), rocksdb_engine_handler.clone());
+
+    let leader_broker = match share_sub.get_leader_node(&cluster_name, &group_name) {
+        Ok(data) => data,
+        Err(e) => {
+            return Err(Status::cancelled(e.to_string()));
+        }
+    };
+
+    if let Some(node) = cluster_cache.get_broker_node(&cluster_name, leader_broker) {
+        reply.broker_id = leader_broker;
+        reply.broker_addr = node.node_inner_addr;
+        reply.extend_info = node.extend;
+    }
+
+    Ok(Response::new(reply))
+}
+
 #[cfg(test)]
 mod tests {
-    use std::fs::remove_dir_all;
     use std::sync::Arc;
 
     use common_base::config::placement_center::placement_center_test_conf;
     use common_base::tools::{now_mills, unique_id};
+    use common_base::utils::file_utils::test_temp_dir;
     use metadata_struct::placement::node::BrokerNode;
     use protocol::placement_center::placement_center_inner::ClusterType;
 
@@ -214,7 +245,7 @@ mod tests {
         let config = placement_center_test_conf();
 
         let rocksdb_engine_handler = Arc::new(RocksDBEngine::new(
-            &config.rocksdb.data_path,
+            &test_temp_dir(),
             config.rocksdb.max_open_files.unwrap(),
             column_family_list(),
         ));
@@ -257,8 +288,6 @@ mod tests {
         share_sub.delete_node(&cluster_name, broker_id).unwrap();
         let result = share_sub.read_node_sub_info(&cluster_name).unwrap();
         assert!(!result.contains_key(&broker_id));
-
-        remove_dir_all(config.rocksdb.data_path).unwrap();
     }
 
     #[test]
@@ -267,7 +296,7 @@ mod tests {
 
         let cluster_name = unique_id();
         let rocksdb_engine_handler = Arc::new(RocksDBEngine::new(
-            &config.rocksdb.data_path,
+            &test_temp_dir(),
             config.rocksdb.max_open_files.unwrap(),
             column_family_list(),
         ));
@@ -329,7 +358,5 @@ mod tests {
             .get_leader_node(&cluster_name, &group_name)
             .unwrap();
         assert_eq!(node, 1);
-
-        remove_dir_all(config.rocksdb.data_path).unwrap();
     }
 }

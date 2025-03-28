@@ -441,7 +441,7 @@ dependencies = [
  "bitflags 2.4.2",
  "cexpr",
  "clang-sys",
- "itertools 0.13.0",
+ "itertools 0.11.0",
  "proc-macro2",
  "quote",
  "regex",
@@ -821,6 +821,7 @@ dependencies = [
  "serde_json",
  "serde_yaml",
  "snowflake",
+ "tempfile",
  "thiserror 1.0.69",
  "tokio",
  "toml",
@@ -2207,6 +2208,8 @@ dependencies = [
  "tokio-rustls 0.26.0",
  "tokio-util",
  "tonic",
+ "tonic-web",
+ "tower-http",
 ]
 
 [[package]]
@@ -2647,6 +2650,8 @@ dependencies = [
  "tokio-rustls 0.26.0",
  "tokio-util",
  "tonic",
+ "tonic-web",
+ "tower-http",
 ]
 
 [[package]]
@@ -3509,8 +3514,8 @@ version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0f3e5beed80eb580c68e2c600937ac2c4eedabdfd5ef1e5b7ea4f3fba84497b"
 dependencies = [
- "heck 0.5.0",
- "itertools 0.13.0",
+ "heck 0.4.1",
+ "itertools 0.11.0",
  "log",
  "multimap",
  "once_cell",
@@ -3530,7 +3535,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "157c5a9d7ea5c2ed2d9fb8f495b64759f7816c7eaea54ba3978f0d63000162e3"
 dependencies = [
  "anyhow",
- "itertools 0.13.0",
+ "itertools 0.11.0",
  "proc-macro2",
  "quote",
  "syn 2.0.90",
@@ -3730,6 +3735,7 @@ dependencies = [
  "prost-build",
  "prost-validate",
  "prost-validate-build",
+ "robustmq-proto-build",
  "robustmq-test",
  "serde",
  "thiserror 1.0.69",
@@ -4158,6 +4164,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3582f63211428f83597b51b2ddb88e2a91a9d52d12831f9d08f5e624e8977422"
 
 [[package]]
+name = "robustmq-proto-build"
+version = "0.1.0"
+source = "git+https://github.com/robustmq/robustmq-proto.git?branch=main#a8098320a9f4ac16e87c32ee995577be21a4f267"
+dependencies = [
+ "prost-build",
+ "prost-validate-build",
+ "tonic-build",
+]
+
+[[package]]
 name = "robustmq-test"
 version = "0.1.14"
 dependencies = [
@@ -4206,6 +4222,7 @@ dependencies = [
  "rocksdb",
  "serde",
  "serde_json",
+ "tempfile",
  "thiserror 1.0.69",
  "tokio",
 ]

@@ -388,13 +388,13 @@ async fn start_call_thread(
         let mut raw_stop_rx = stop_send.subscribe();
         if let Some(node_send) = call_manager.get_node_sender(&cluster_name, node.node_id) {
             let mut data_recv = node_send.sender.subscribe();
-            info!("Thread starts successfully, Inner communication between Placement Center and Journal Engine node [{:?}].",node);
+            info!("Thread starts successfully, Inner communication between Placement Center and MQTT Broker node [{:?}].",node);
             loop {
                 select! {
                     val = raw_stop_rx.recv() =>{
                         if let Ok(flag) = val {
                             if flag {
-                                info!("Thread stops successfully, Inner communication between Placement Center and Journal Engine node [{:?}].",node);
+                                info!("Thread stops successfully, Inner communication between Placement Center and MQTT Broker node [{:?}].",node);
                                 break;
                             }
                         }
@@ -424,10 +424,10 @@ async fn call_mqtt_update_cache(
 
     match broker_mqtt_update_cache(&client_pool, &[addr], request).await {
         Ok(resp) => {
-            debug!("Calling Journal Engine returns information:{:?}", resp);
+            debug!("Calling MQTT Broker returns information:{:?}", resp);
         }
         Err(e) => {
-            error!("Calling Journal Engine to update cache failed,{}", e);
+            error!("Calling MQTT Broker to update cache failed,{}", e);
         }
     };
 }

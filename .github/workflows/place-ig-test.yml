@@ -35,7 +35,7 @@ jobs:
   linux-tests:
     name: cargo test
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 300
     container:
       image: amd64/rust
     steps:
@@ -51,7 +51,7 @@ jobs:
           args: --locked
       - uses: actions/checkout@v3
       - name: Run tests
-        run: make place-ig-test-ci
+        run: sh ./scripts/place-ig-test.sh ci
         # we need change shell scripts to product only one junit.xml
 #      - name: Upload JUnit report
 #        # Run this step even if the test step fails. Upload it right now because

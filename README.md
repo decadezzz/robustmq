@@ -9,8 +9,8 @@
   <img alt="License" src="https://img.shields.io/github/license/robustmq/robustmq?style=flat">
   <img alt="GitHub issues" src="https://img.shields.io/github/issues/robustmq/robustmq?style=flat">
   <img alt="GitHub stars" src="https://img.shields.io/github/stars/robustmq/robustmq?style=flat">
-  <a href="https://codecov.io/gh/robustmq/robustmq" > 
-  <img src="https://codecov.io/gh/robustmq/robustmq/graph/badge.svg?token=MRFFAX9QZO"/> 
+  <a href="https://codecov.io/gh/robustmq/robustmq" >
+  <img src="https://codecov.io/gh/robustmq/robustmq/graph/badge.svg?token=MRFFAX9QZO"/>
  </a>
 </p>
 
@@ -116,7 +116,7 @@ RobustMQ MQTT is RobustMQ's complete implementation of the MQTT protocol. The go
 - **Discord Group**: [Discord Link](https://discord.gg/jVxz2EF3)
 - **Wechat Group**: If you're interested in contributing to this project or discussing development topics, scan the QR Code to join our WeChat group for real-time discussions and collaboration.
 <div align="center">
-  <img src="docs/images/WechatGroup.png" alt="WeChat QR Code" width=200 />
+  <img src="docs/images/WechatGroup.jpg" alt="WeChat QR Code" width=200 />
 </div>
 
 - **Personal wechat**: Wechat group QR code will be updated regularly. If the QR code expires, the developer's personal wechat can be added.
